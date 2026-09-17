@@ -11,13 +11,9 @@
   --bg:#F2F1EE; --surface:#FFFFFF; --ink:#000000; --muted:#6B6B6B; --line:#D6D5D1;
   --accent:#2419B8; --accent-soft:#E4E3F7; --done:#000000; --on-done:#FFFFFF;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#000000; --surface:#141414; --ink:#F2F1EE; --muted:#9A9A9A; --line:#2E2E2E;
-    --accent:#7F78FF; --accent-soft:#1C1A3D; --done:#F2F1EE; --on-done:#000000;
-  }
-}
-:root[data-theme="dark"]{
+:root{color-scheme:light}
+:root.dark{
+  color-scheme:dark;
   --bg:#000000; --surface:#141414; --ink:#F2F1EE; --muted:#9A9A9A; --line:#2E2E2E;
   --accent:#7F78FF; --accent-soft:#1C1A3D; --done:#F2F1EE; --on-done:#000000;
 }
@@ -40,14 +36,38 @@ h1 .narrow{color:var(--accent)}
 button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;font-size:14px}
 button:hover{border-color:var(--ink)}
 button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-:root[data-theme="dark"] button.primary{color:#0d1220}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0d1220}}
+:root.dark button.primary{color:#000}
+.themebtn{float:right;margin-top:-4px}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 18px}
-.tabs button{padding:12px 8px;text-align:left;border-radius:10px}
-.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.tabs small{display:block;font-size:12px;opacity:.75}
-.tabs strong{font-size:16px;font-variation-settings:"wdth" 75}
+.views{display:flex;gap:4px;margin:0 0 20px;border-bottom:2px solid var(--ink)}
+.views button{border:none;border-radius:8px 8px 0 0;background:transparent;padding:10px 14px;font-size:15px;font-weight:600;color:var(--muted)}
+.views button[aria-current="page"]{background:var(--ink);color:var(--bg)}
+.weekgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0 0 20px}
+.day{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 8px;display:flex;flex-direction:column;gap:4px;min-height:118px;text-align:left;font:inherit;color:var(--ink)}
+button.day{cursor:pointer}
+.day .dn{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:4px}
+.day select{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:2px 4px;max-width:100%}
+.day .open{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;flex:1}
+.day .open:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.day.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.day.sel .dn,.day.sel .ds{color:var(--bg);opacity:.8}
+.day.sel select{background:var(--ink);color:var(--bg);border-color:var(--bg)}
+.day.sel .progress{background:rgba(127,127,127,.45)}
+.day.sel .progress i{background:var(--bg)}
+.offplan{font-size:14px;color:var(--muted);margin:-10px 0 20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.day .dt{font-weight:700;font-size:15px;line-height:1.15;font-variation-settings:"wdth" 75}
+.day .ds{font-size:12px;color:var(--muted);margin-top:auto}
+button.day[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button.day[aria-pressed="true"] .dn,button.day[aria-pressed="true"] .ds{color:var(--bg);opacity:.75}
+button.day[aria-pressed="true"] .progress{background:rgba(127,127,127,.45)}
+button.day[aria-pressed="true"] .progress i{background:var(--bg)}
+.day.rest{border-style:dashed}
+.day textarea{flex:1;width:100%;min-height:62px;resize:vertical;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;line-height:1.35;padding:0}
+.day textarea::placeholder{color:var(--muted);opacity:.7}
+.day textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sauna{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.sauna p{margin:2px 0 0;font-size:14px;color:var(--muted);max-width:52ch}
+.sauna button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .progress{height:4px;background:var(--line);border-radius:2px;margin:6px 0 0;overflow:hidden}
 .progress i{display:block;height:100%;background:var(--done);width:0;transition:width .3s}
 .block{margin:0 0 22px}
@@ -61,11 +81,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .ex-scheme{font-variation-settings:"wdth" 75;font-weight:700;white-space:nowrap;font-size:17px}
 .ex-why{color:var(--muted);font-size:14px;margin:4px 0 10px}
 .tag{display:inline-block;font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:2px}
-.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sets{display:flex;flex-direction:column;gap:6px}
+.setrow{display:flex;gap:8px;align-items:center}
+.setrow .unit{font-size:13px;color:var(--muted)}
+.setrow input{width:66px;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:15px;text-align:right}
+.setrow input::placeholder{color:var(--muted);opacity:.6}
+.setrow.is-done input{border-color:var(--ink)}
 .set{width:38px;height:38px;border-radius:50%;padding:0;font-weight:600}
 .set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--on-done)}
-.kg{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;color:var(--muted)}
-.kg input{width:70px;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:15px;text-align:right}
 .last{font-size:12px;color:var(--muted);margin-top:6px}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
@@ -79,12 +102,13 @@ th{color:var(--muted);font-weight:500}
 .rules p{margin:0 0 6px;font-size:15px}
 .sync{font-size:12px;color:var(--muted);margin-top:30px}
 .hidden{display:none}
-@media (max-width:560px){.kg{margin-left:0;width:100%}.tabs{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:96px}.weekgrid .day:last-child{grid-column:span 2}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <button class="themebtn" id="themeBtn">Tryb ciemny</button>
   <p class="kicker">Plan pod rekompozycję, 3 treningi po ~60 min</p>
   <h1><span>Szersza góra.</span><span class="narrow">Węższa talia.</span></h1>
   <div class="stats">
@@ -93,20 +117,22 @@ th{color:var(--muted);font-weight:500}
   <div class="note">
     <p>Proporcje „athletic” budują trzy rzeczy: pełniejsza górna klatka, szersze barki (boczny akton) i szersze plecy. To optycznie zwęża talię i biodra. Dlatego wznosy bokiem i ściąganie drążka są w planie tak samo ważne jak wyciskanie.</p>
     <p>Oponkę i boczki odsłoni niższy poziom tkanki tłuszczowej: lekki deficyt, dużo białka i kroki. Brzuch trenujemy porządnie w każdym dniu, żeby było co odsłaniać.</p>
-    <p>Rozłóż treningi z dniem przerwy między nimi, np. pon / śr / pt. W tygodniu, w którym dasz radę tylko 2 razy, zrób A i B.</p>
+    <p>Domyślnie treningi są w poniedziałek, środę i piątek. Każdy dzień możesz zmienić w kafelku, najlepiej z dniem przerwy między treningami. W tygodniu, w którym dasz radę tylko 2 razy, zrób A i B. W dni wolne wpisz w kafelku, co robiłeś.</p>
   </div>
 
-  <div class="bar">
-    <div class="week">Tydzień <b id="weekNo">1</b></div>
-    <button id="clearBtn">Wyczyść ten trening</button>
-    <button id="newWeekBtn" class="primary">Zapisz i zacznij nowy tydzień</button>
-  </div>
+  <nav class="views" aria-label="Sekcje">
+    <button data-view="plan" aria-current="page">Plan tygodnia</button>
+    <button data-view="log">Dziennik</button>
+    <button data-view="rules">Zasady</button>
+  </nav>
 
-  <div class="tabs" role="tablist">
-    <button role="tab" data-tab="A" aria-selected="true"><small>Dzień 1</small><strong>A: klatka + brzuch</strong><div class="progress"><i id="pA"></i></div></button>
-    <button role="tab" data-tab="B" aria-selected="false"><small>Dzień 2</small><strong>B: plecy + barki</strong><div class="progress"><i id="pB"></i></div></button>
-    <button role="tab" data-tab="C" aria-selected="false"><small>Dzień 3</small><strong>C: góra + ramiona</strong><div class="progress"><i id="pC"></i></div></button>
-    <button role="tab" data-tab="log" aria-selected="false"><small>Postęp</small><strong>Dziennik</strong></button>
+  <div id="planHead">
+    <div class="bar">
+      <div class="week">Tydzień <b id="weekNo">1</b></div>
+      <button id="clearBtn">Wyczyść ten trening</button>
+      <button id="newWeekBtn" class="primary">Zapisz i zacznij nowy tydzień</button>
+    </div>
+    <div class="weekgrid" id="weekgrid"></div>
   </div>
 
   <div id="view"></div>
@@ -181,12 +207,24 @@ PLAN.C = {
 };
 const ALL = [...PLAN.A.blocks, ...PLAN.B.blocks, ...PLAN.C.blocks].flatMap(b=>b.items);
 
-let state = { week:1, done:{}, kg:{}, history:[], body:[] };
+let state = { week:1, done:{}, kg:{}, log:{}, rest:{}, sauna:{}, schedule:null, history:[], body:[] };
+const WEEK = [
+  {k:"mon",d:"Poniedziałek",t:"A"},{k:"tue",d:"Wtorek"},{k:"wed",d:"Środa",t:"B"},
+  {k:"thu",d:"Czwartek"},{k:"fri",d:"Piątek",t:"C"},{k:"sat",d:"Sobota"},{k:"sun",d:"Niedziela"}
+];
+const TITLES = {A:"A: klatka + brzuch",B:"B: plecy + barki",C:"C: góra + ramiona"};
+let view = "plan";
+function sched(){ if(!state.schedule){ state.schedule={}; WEEK.forEach(w=>state.schedule[w.k]=w.t||""); } return state.schedule; }
+function setDay(k,val){
+  const sc=sched();
+  if(val){ WEEK.forEach(w=>{ if(w.k!==k && sc[w.k]===val) sc[w.k]=""; }); }
+  sc[k]=val; save(); render();
+}
 let tab = "A";
 let db = null, docRef = null, saveTimer = null;
 const LS_KEY = "plan2x_state_v1";
 
-function lsLoad(){ try{ const s = localStorage.getItem(LS_KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} }
+function lsLoad(){ try{ const s = localStorage.getItem(LS_KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} ['log','rest','sauna'].forEach(k=>{ if(!state[k]) state[k]={}; }); }
 function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
 function save(){
   lsSave();
@@ -199,9 +237,19 @@ function save(){
 }
 function setSync(t){ document.getElementById("sync").textContent = "Zapisywanie: " + t; }
 
-function lastKg(id){
-  for(let i=state.history.length-1;i>=0;i--){ const h=state.history[i]; if(h.kg && h.kg[id]) return {kg:h.kg[id], week:h.week}; }
+function hasVals(arr){ return Array.isArray(arr) && arr.some(x=>x && (x.kg||x.reps)); }
+function lastSets(id){
+  for(let i=state.history.length-1;i>=0;i--){
+    const h=state.history[i];
+    if(h.log && hasVals(h.log[id])) return {sets:h.log[id], week:h.week};
+    if(h.kg && h.kg[id]) return {sets:[{kg:h.kg[id]}], week:h.week, same:true};
+  }
   return null;
+}
+function fmtSet(x,unit){ if(!x) return "–"; const k=x.kg?String(x.kg).replace(".",",")+" kg":""; const r=x.reps?x.reps+(unit==="s"?" s":""):""; return k&&r? k+" × "+r : (k||r||"–"); }
+function maxKg(h,id){
+  if(h.log && hasVals(h.log[id])){ const n=h.log[id].map(x=>parseFloat(String(x&&x.kg||"").replace(",","."))).filter(v=>!isNaN(v)); return n.length? String(Math.max(...n)).replace(".",",") : "–"; }
+  return (h.kg&&h.kg[id])||"–";
 }
 function pct(day){
   const items = PLAN[day].blocks.flatMap(b=>b.items);
@@ -213,39 +261,96 @@ function esc(s){ const d=document.createElement("div"); d.textContent=s; return 
 
 function render(){
   document.getElementById("weekNo").textContent = state.week;
-  document.getElementById("pA").style.width = pct("A")+"%";
-  document.getElementById("pB").style.width = pct("B")+"%";
-  document.getElementById("pC").style.width = pct("C")+"%";
-  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===tab));
-  document.getElementById("clearBtn").classList.toggle("hidden", tab==="log");
+  document.querySelectorAll(".views button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  document.getElementById("planHead").classList.toggle("hidden", view!=="plan");
   const v = document.getElementById("view");
-  if(tab==="log"){ v.innerHTML = renderLog(); bindLog(); return; }
-  v.innerHTML = PLAN[tab].blocks.map(b=>`
+  if(view==="log"){ v.innerHTML = renderLog(); bindLog(); return; }
+  if(view==="rules"){ v.innerHTML = rulesHtml(); return; }
+  renderWeek();
+  v.innerHTML = `<h2 style="font-size:28px;margin:0 0 12px;font-variation-settings:'wdth' 70">${TITLES[tab]}</h2>` + PLAN[tab].blocks.map(b=>`
     <section class="block">
       <h2>${b.title}</h2><p class="sub">${b.sub}</p>
       ${b.items.map(it=>{
         const done = state.done[it.id]||[];
         const all = done.filter(Boolean).length===it.sets;
-        const last = lastKg(it.id);
+        const last = lastSets(it.id);
+        const unit = /\bs\b/.test(it.reps) && !/kg/.test(it.reps) ? "s" : "powt.";
+        const cur = state.log[it.id]||[];
         return `<div class="ex ${it.pair?'pair':''} ${all?'complete':''}">
           <div class="ex-head"><div class="ex-name">${it.name}</div><div class="ex-scheme">${it.sets} × ${it.reps}</div></div>
           <p class="ex-why"><span class="tag">${it.tag}</span>${it.why}</p>
-          <div class="row">
-            ${Array.from({length:it.sets},(_,i)=>`<button class="set" data-ex="${it.id}" data-i="${i}" aria-pressed="${!!done[i]}" aria-label="Seria ${i+1}">${i+1}</button>`).join("")}
-            <label class="kg">ciężar (kg)<input inputmode="decimal" data-kg="${it.id}" value="${esc(state.kg[it.id]||"")}" placeholder="–"></label>
+          <div class="sets">
+            ${Array.from({length:it.sets},(_,i)=>{
+              const c=cur[i]||{};
+              const p=last? (last.same? last.sets[0] : (last.sets[i]||{})) : (state.kg[it.id]?{kg:state.kg[it.id]}:{});
+              return `<div class="setrow ${done[i]?'is-done':''}">
+                <button class="set" data-ex="${it.id}" data-i="${i}" aria-pressed="${!!done[i]}" aria-label="Odhacz serię ${i+1}">${i+1}</button>
+                <input inputmode="decimal" aria-label="Seria ${i+1}: ciężar w kg" data-ex="${it.id}" data-i="${i}" data-f="kg" value="${esc(c.kg||"")}" placeholder="${esc(p.kg||"–")}"><span class="unit">kg ×</span>
+                <input inputmode="numeric" aria-label="Seria ${i+1}: ${unit==='s'?'czas w sekundach':'powtórzenia'}" data-ex="${it.id}" data-i="${i}" data-f="reps" value="${esc(c.reps||"")}" placeholder="${esc(p.reps||"–")}"><span class="unit">${unit}</span>
+              </div>`;}).join("")}
           </div>
           <a class="yt" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent((it.yt||it.name)+' technika')}">Zobacz, jak to zrobić (YouTube)</a>
-          ${last?`<div class="last">Ostatnio: ${esc(last.kg)} kg (tydz. ${last.week})</div>`:""}
+          ${last?`<div class="last">Tydzień ${last.week}: ${esc(last.same? last.sets[0].kg+' kg' : last.sets.map(x=>fmtSet(x,unit)).join(', '))}</div>`:""}
         </div>`;
       }).join("")}
-    </section>`).join("") + rulesHtml();
+    </section>`).join("") + `
+    <section class="block"><h2>Po treningu</h2>
+      <div class="sauna">
+        <div><strong>Sauna (opcjonalnie)</strong>
+        <p>2–3 wejścia po 8–15 min, między nimi schłodzenie i kilka minut odpoczynku. Wypij 0,5–1 l wody. Najpierw zrób bieżnię, saunę na sam koniec.</p></div>
+        <button id="saunaBtn" aria-pressed="${!!state.sauna[tab]}">${state.sauna[tab]?'Sauna zaliczona':'Odhacz saunę'}</button>
+      </div>
+    </section>`;
+  document.getElementById("saunaBtn").onclick=()=>{ state.sauna[tab]=!state.sauna[tab]; save(); render(); };
   v.querySelectorAll(".set").forEach(b=>b.onclick=()=>{
     const id=b.dataset.ex, i=+b.dataset.i;
     state.done[id] = state.done[id]||[];
     state.done[id][i] = !state.done[id][i];
     save(); render();
   });
-  v.querySelectorAll("input[data-kg]").forEach(inp=>inp.onchange=()=>{ state.kg[inp.dataset.kg]=inp.value.trim(); save(); });
+  v.querySelectorAll("input[data-f]").forEach(inp=>inp.oninput=()=>{
+    const id=inp.dataset.ex, i=+inp.dataset.i;
+    state.log[id] = state.log[id]||[];
+    state.log[id][i] = Object.assign({}, state.log[id][i]||{}, {[inp.dataset.f]: inp.value.trim()});
+    save();
+  });
+}
+
+function renderWeek(){
+  const g=document.getElementById("weekgrid");
+  const sc=sched();
+  const focused = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.rest : null;
+  const opts = k => `<select data-day="${k}" aria-label="Co w ten dzień">
+      <option value="" ${!sc[k]?'selected':''}>Wolne</option>
+      ${["A","B","C"].map(t=>`<option value="${t}" ${sc[k]===t?'selected':''}>Trening ${t}</option>`).join("")}
+    </select>`;
+  g.innerHTML = WEEK.map(w=>{
+    const t=sc[w.k];
+    return t ? `
+    <div class="day ${tab===t?'sel':''}">
+      <span class="dn">${w.d.slice(0,3)}${opts(w.k)}</span>
+      <button class="open" data-t="${t}" aria-pressed="${tab===t}">
+        <span class="dt">${TITLES[t]}</span>
+        <span class="ds">${pct(t)}% serii${state.sauna[t]?' + sauna':''}</span>
+        <div class="progress"><i style="width:${pct(t)}%"></i></div>
+      </button>
+    </div>` : `
+    <div class="day rest">
+      <span class="dn">${w.d.slice(0,3)}${opts(w.k)}</span>
+      <textarea data-rest="${w.k}" aria-label="${w.d}: co robiłeś" placeholder="Wpisz, co robiłeś, np. bieżnia 30 min">${esc(state.rest[w.k]||"")}</textarea>
+    </div>`;
+  }).join("");
+  const planned = Object.values(sc).filter(Boolean);
+  const off = ["A","B","C"].filter(t=>!planned.includes(t));
+  let el=document.getElementById("offplan");
+  if(!el){ el=document.createElement("div"); el.id="offplan"; el.className="offplan"; g.after(el); }
+  el.innerHTML = off.length ? `Nieprzypisane w tym tygodniu: ${off.map(t=>`<button data-t="${t}">${TITLES[t]}</button>`).join("")}` : "";
+  el.classList.toggle("hidden", !off.length);
+  g.querySelectorAll(".open").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; render(); });
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; render(); });
+  g.querySelectorAll("select").forEach(x=>x.onchange=()=>{ if(x.value) tab=x.value; setDay(x.dataset.day, x.value); });
+  g.querySelectorAll("textarea").forEach(t=>t.oninput=()=>{ state.rest[t.dataset.rest]=t.value; save(); });
+  if(focused){ const t=g.querySelector(`[data-rest="${focused}"]`); if(t) t.focus(); }
 }
 
 function rulesHtml(){
@@ -254,6 +359,9 @@ function rulesHtml(){
     <h3>Tempo i przerwy</h3><p>Opuszczanie 2–3 s. Przerwy 60–90 s w parach, 90–120 s przy pierwszym ćwiczeniu. Jeśli po dniu A albo B czujesz, że mięśnie nie zdążyły się zregenerować przed C, zrób w dniu C o jedną serię mniej w każdym ćwiczeniu. Dzięki parom mieścisz się w godzinie.</p>
     <h3>Odżywianie pod talię</h3><p>Przy 68 kg celuj w ok. 110–135 g białka dziennie (1,6–2 g/kg). Lekki deficyt, ok. 300 kcal poniżej zapotrzebowania, daje spadek ok. 0,25–0,5 kg tygodniowo i pozwala utrzymać siłę. Jeśli siła mocno spada, zjedz więcej.</p>
     <h3>Poza siłownią: bieżnia zamiast kroków</h3><p>Pełne 8–10 tys. kroków to ok. 70–85 min marszu, więc nie ma sensu gonić tej liczby na bieżni. Zamiast tego po każdym treningu zrób 20–30 min marszu pod górę: nachylenie 8–12%, prędkość 4,5–5,5 km/h, bez trzymania się poręczy. To ok. 2,5–3,5 tys. kroków i ok. 150–250 kcal na sesję. W dni bez siłowni wystarczy zwykły ruch, np. schody zamiast windy albo 10 min spaceru po posiłku.</p>
+    <h3>Sauna</h3><p>Dobrze działa na relaks i regenerację, ale nie spala tkanki tłuszczowej. Spadek wagi po saunie to woda, która wraca po wypiciu. Nie wchodź odwodniony, nie łącz z alkoholem i wyjdź, jeśli kręci Ci się w głowie.</p>
+    <h3>Dni tygodnia</h3><p>W kafelku wybierz z listy, czy to dzień wolny, czy trening A, B albo C. Przypisanie treningu do nowego dnia zdejmuje go ze starego. Układ zostaje na kolejny tydzień, więc zmieniasz go tylko wtedy, gdy plan się przesuwa. Staraj się nie robić dwóch treningów dzień po dniu. Jeśli się nie da, w drugim dniu zrób o jedną serię mniej w każdym ćwiczeniu.</p>
+    <h3>Dni wolne</h3><p>Wpisuj w kafelkach, co robiłeś: bieżnię, spacer, basen, rower. W historii tygodni zobaczysz, ile było ruchu poza siłownią.</p>
     <h3>Co 6–8 tygodni</h3><p>Zrób lżejszy tydzień (mniej serii, ten sam ciężar) i sprawdź obwód talii w dzienniku. Jeśli talia stoi w miejscu przez 3–4 tygodnie, zmniejsz nieco kalorie albo dołóż kroki.</p>
   </div></section>`;
 }
@@ -275,9 +383,9 @@ function renderLog(){
     </table></div>`:`<p class="sub">Brak pomiarów. Dodaj pierwszy, żeby mieć punkt odniesienia.</p>`}
   </section>
   <section class="block"><h2>Historia tygodni</h2>
-    <p class="sub">Tydzień trafia tutaj po kliknięciu „Zapisz i zacznij nowy tydzień”. Pokazuję ciężary z kluczowych ćwiczeń.</p>
-    ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
-      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td>${keyEx.map(id=>`<td>${esc((h.kg&&h.kg[id])||"–")}</td>`).join("")}</tr>`).join("")}
+    <p class="sub">Tydzień trafia tutaj po kliknięciu „Zapisz i zacznij nowy tydzień”. Pokazuję najwyższy ciężar z kluczowych ćwiczeń.</p>
+    ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th><th>Sauna</th><th>Dni wolne</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
+      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td><td>${h.sauna!=null?h.sauna+'×':'–'}</td><td style="min-width:180px">${esc(h.rest? WEEK.filter(w=>h.rest[w.k]).map(w=>w.d.slice(0,3)+': '+h.rest[w.k]).join('; ') || '–' : '–')}</td>${keyEx.map(id=>`<td>${esc(maxKg(h,id))}</td>`).join("")}</tr>`).join("")}
     </table></div>`:`<p class="sub">Jeszcze nic. Po pierwszym tygodniu zobaczysz tu swoje ciężary.</p>`}
   </section>`;
 }
@@ -292,19 +400,31 @@ function bindLog(){
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ state.body.splice(+b.dataset.del,1); save(); render(); });
 }
 
-document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; render(); window.scrollTo({top:document.querySelector(".tabs").offsetTop-10}); });
+document.querySelectorAll(".views button").forEach(b=>b.onclick=()=>{ view=b.dataset.view; render(); });
 document.getElementById("clearBtn").onclick=()=>{
-  if(!confirm("Wyczyścić odhaczone serie w tym treningu? Ciężary zostaną.")) return;
+  if(!confirm("Wyczyścić odhaczone serie i saunę w tym treningu? Wpisane ciężary i powtórzenia zostaną.")) return;
   PLAN[tab].blocks.flatMap(b=>b.items).forEach(it=>delete state.done[it.id]);
+  delete state.sauna[tab];
   save(); render();
 };
 document.getElementById("newWeekBtn").onclick=()=>{
   if(!confirm("Zapisać tydzień "+state.week+" w historii i zacząć nowy?")) return;
-  state.history.push({week:state.week, pA:pct("A"), pB:pct("B"), pC:pct("C"), kg:{...state.kg}, date:new Date().toISOString().slice(0,10)});
-  state.week++; state.done={};
+  state.history.push({week:state.week, pA:pct("A"), pB:pct("B"), pC:pct("C"), kg:{...state.kg}, log:JSON.parse(JSON.stringify(state.log)), rest:Object.fromEntries(Object.entries(state.rest).filter(([k,v])=>v && !sched()[k])), schedule:{...sched()}, sauna:Object.values(state.sauna).filter(Boolean).length, date:new Date().toISOString().slice(0,10)});
+  state.week++; state.done={}; state.log={}; state.kg={}; state.rest={}; state.sauna={};
   save(); render();
 };
 
+function applyTheme(){
+  let dark=false; try{ dark = localStorage.getItem("plan2x_theme")==="dark"; }catch(e){}
+  document.documentElement.classList.toggle("dark", dark);
+  document.getElementById("themeBtn").textContent = dark ? "Tryb jasny" : "Tryb ciemny";
+}
+document.getElementById("themeBtn").onclick=()=>{
+  const dark=!document.documentElement.classList.contains("dark");
+  try{ localStorage.setItem("plan2x_theme", dark?"dark":"light"); }catch(e){}
+  applyTheme();
+};
+applyTheme();
 lsLoad(); render();
 
 (async ()=>{
@@ -316,7 +436,7 @@ lsLoad(); render();
     if(!id) return;
     db = d; docRef = db.doc("data/users/"+id+"/plan/state");
     const snap = await docRef.get();
-    if(snap.exists){ state = Object.assign({week:1,done:{},kg:{},history:[],body:[]}, snap.data()); lsSave(); render(); }
+    if(snap.exists){ state = Object.assign({week:1,done:{},kg:{},log:{},rest:{},sauna:{},history:[],body:[]}, snap.data()); ['log','rest','sauna'].forEach(k=>{ if(!state[k]) state[k]={}; }); lsSave(); render(); }
     setSync("na Twoim koncie, prywatnie. Działa na telefonie i komputerze.");
   }catch(e){ docRef=null; }
 })();
