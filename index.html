@@ -42,27 +42,29 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .views{display:flex;gap:4px;margin:0 0 20px;border-bottom:2px solid var(--ink)}
 .views button{border:none;border-radius:8px 8px 0 0;background:transparent;padding:10px 14px;font-size:15px;font-weight:600;color:var(--muted)}
 .views button[aria-current="page"]{background:var(--ink);color:var(--bg)}
-.weekgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0 0 20px}
+.weekgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 20px}
 .day{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 8px;display:flex;flex-direction:column;gap:4px;min-height:118px;text-align:left;font:inherit;color:var(--ink)}
 button.day{cursor:pointer}
-.day .dn{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:4px}
-.day select{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:2px 4px;max-width:100%}
+.day{min-width:0}
+.day .dn{font-size:14px;font-weight:600;color:var(--ink)}
+.day select{width:100%;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);padding:4px 6px;margin:2px 0 4px}
 .day .open{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:4px;flex:1}
 .day .open:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
 .day.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.day.sel .dn,.day.sel .ds{color:var(--bg);opacity:.8}
+.day.sel .ds{color:var(--bg);opacity:.8}
+.day.sel .dn{color:var(--bg)}
 .day.sel select{background:var(--ink);color:var(--bg);border-color:var(--bg)}
 .day.sel .progress{background:rgba(127,127,127,.45)}
 .day.sel .progress i{background:var(--bg)}
 .offplan{font-size:14px;color:var(--muted);margin:-10px 0 20px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.day .dt{font-weight:700;font-size:15px;line-height:1.15;font-variation-settings:"wdth" 75}
+.day .dt{font-weight:700;font-size:15px;overflow-wrap:anywhere;line-height:1.15;font-variation-settings:"wdth" 75}
 .day .ds{font-size:12px;color:var(--muted);margin-top:auto}
 button.day[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 button.day[aria-pressed="true"] .dn,button.day[aria-pressed="true"] .ds{color:var(--bg);opacity:.75}
 button.day[aria-pressed="true"] .progress{background:rgba(127,127,127,.45)}
 button.day[aria-pressed="true"] .progress i{background:var(--bg)}
 .day.rest{border-style:dashed}
-.day textarea{flex:1;width:100%;min-height:62px;resize:vertical;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;line-height:1.35;padding:0}
+.day textarea{flex:1;width:100%;min-height:52px;resize:none;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;line-height:1.35;padding:0}
 .day textarea::placeholder{color:var(--muted);opacity:.7}
 .day textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .sauna{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
@@ -102,7 +104,7 @@ th{color:var(--muted);font-weight:500}
 .rules p{margin:0 0 6px;font-size:15px}
 .sync{font-size:12px;color:var(--muted);margin-top:30px}
 .hidden{display:none}
-@media (max-width:760px){.weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:96px}.weekgrid .day:last-child{grid-column:span 2}}
+@media (max-width:560px){.weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:96px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -209,8 +211,8 @@ const ALL = [...PLAN.A.blocks, ...PLAN.B.blocks, ...PLAN.C.blocks].flatMap(b=>b.
 
 let state = { week:1, done:{}, kg:{}, log:{}, rest:{}, sauna:{}, schedule:null, history:[], body:[] };
 const WEEK = [
-  {k:"mon",d:"Poniedziałek",t:"A"},{k:"tue",d:"Wtorek"},{k:"wed",d:"Środa",t:"B"},
-  {k:"thu",d:"Czwartek"},{k:"fri",d:"Piątek",t:"C"},{k:"sat",d:"Sobota"},{k:"sun",d:"Niedziela"}
+  {k:"mon",d:"Poniedziałek",s:"Pon",t:"A"},{k:"tue",d:"Wtorek",s:"Wt"},{k:"wed",d:"Środa",s:"Śr",t:"B"},
+  {k:"thu",d:"Czwartek",s:"Czw"},{k:"fri",d:"Piątek",s:"Pt",t:"C"},{k:"sat",d:"Sobota",s:"Sob"},{k:"sun",d:"Niedziela",s:"Nie"}
 ];
 const TITLES = {A:"A: klatka + brzuch",B:"B: plecy + barki",C:"C: góra + ramiona"};
 let view = "plan";
@@ -328,7 +330,7 @@ function renderWeek(){
     const t=sc[w.k];
     return t ? `
     <div class="day ${tab===t?'sel':''}">
-      <span class="dn">${w.d.slice(0,3)}${opts(w.k)}</span>
+      <span class="dn">${w.s}</span>${opts(w.k)}
       <button class="open" data-t="${t}" aria-pressed="${tab===t}">
         <span class="dt">${TITLES[t]}</span>
         <span class="ds">${pct(t)}% serii${state.sauna[t]?' + sauna':''}</span>
@@ -336,8 +338,8 @@ function renderWeek(){
       </button>
     </div>` : `
     <div class="day rest">
-      <span class="dn">${w.d.slice(0,3)}${opts(w.k)}</span>
-      <textarea data-rest="${w.k}" aria-label="${w.d}: co robiłeś" placeholder="Wpisz, co robiłeś, np. bieżnia 30 min">${esc(state.rest[w.k]||"")}</textarea>
+      <span class="dn">${w.s}</span>${opts(w.k)}
+      <textarea data-rest="${w.k}" aria-label="${w.d}: co robiłeś" placeholder="Co robiłeś?">${esc(state.rest[w.k]||"")}</textarea>
     </div>`;
   }).join("");
   const planned = Object.values(sc).filter(Boolean);
@@ -385,7 +387,7 @@ function renderLog(){
   <section class="block"><h2>Historia tygodni</h2>
     <p class="sub">Tydzień trafia tutaj po kliknięciu „Zapisz i zacznij nowy tydzień”. Pokazuję najwyższy ciężar z kluczowych ćwiczeń.</p>
     ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th><th>Sauna</th><th>Dni wolne</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
-      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td><td>${h.sauna!=null?h.sauna+'×':'–'}</td><td style="min-width:180px">${esc(h.rest? WEEK.filter(w=>h.rest[w.k]).map(w=>w.d.slice(0,3)+': '+h.rest[w.k]).join('; ') || '–' : '–')}</td>${keyEx.map(id=>`<td>${esc(maxKg(h,id))}</td>`).join("")}</tr>`).join("")}
+      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td><td>${h.sauna!=null?h.sauna+'×':'–'}</td><td style="min-width:180px">${esc(h.rest? WEEK.filter(w=>h.rest[w.k]).map(w=>w.s+': '+h.rest[w.k]).join('; ') || '–' : '–')}</td>${keyEx.map(id=>`<td>${esc(maxKg(h,id))}</td>`).join("")}</tr>`).join("")}
     </table></div>`:`<p class="sub">Jeszcze nic. Po pierwszym tygodniu zobaczysz tu swoje ciężary.</p>`}
   </section>`;
 }
