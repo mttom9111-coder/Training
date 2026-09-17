@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plan 3×: szeroka góra, wąska talia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F1EE; --surface:#FFFFFF; --ink:#000000; --muted:#6B6B6B; --line:#D6D5D1;
+  --accent:#2419B8; --accent-soft:#E4E3F7; --done:#000000; --on-done:#FFFFFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#000000; --surface:#141414; --ink:#F2F1EE; --muted:#9A9A9A; --line:#2E2E2E;
+    --accent:#7F78FF; --accent-soft:#1C1A3D; --done:#F2F1EE; --on-done:#000000;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#000000; --surface:#141414; --ink:#F2F1EE; --muted:#9A9A9A; --line:#2E2E2E;
+  --accent:#7F78FF; --accent-soft:#1C1A3D; --done:#F2F1EE; --on-done:#000000;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);border:10px solid var(--surface);min-height:100vh;color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px;line-height:1.5;font-variation-settings:"wdth" 100}
+.wrap{max-width:760px;margin:0 auto;padding:28px 18px 80px}
+.yt{display:inline-block;margin-top:8px;font-size:14px;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.yt:hover{text-decoration-thickness:2px}
+.kicker{color:var(--muted);font-size:14px;margin:0 0 8px}
+h1{font-size:clamp(40px,10vw,76px);line-height:.92;margin:0 0 22px;font-weight:800;font-variation-settings:"wdth" 62;letter-spacing:-.01em}
+h1 span{display:block}
+h1 .narrow{color:var(--accent)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 22px;margin:0 0 22px;color:var(--muted);font-size:14px}
+.stats b{color:var(--ink);font-size:22px;font-variation-settings:"wdth" 75;margin-right:3px}
+.note{background:var(--surface);border-left:3px solid var(--accent);padding:14px 16px;margin:0 0 26px;font-size:15px}
+.note p{margin:0 0 8px}.note p:last-child{margin:0}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px}
+.week{font-size:15px;color:var(--muted);margin-right:auto}
+.week b{font-size:26px;color:var(--ink);font-variation-settings:"wdth" 70}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 13px;font-size:14px}
+button:hover{border-color:var(--ink)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0d1220}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0d1220}}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 18px}
+.tabs button{padding:12px 8px;text-align:left;border-radius:10px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs small{display:block;font-size:12px;opacity:.75}
+.tabs strong{font-size:16px;font-variation-settings:"wdth" 75}
+.progress{height:4px;background:var(--line);border-radius:2px;margin:6px 0 0;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--done);width:0;transition:width .3s}
+.block{margin:0 0 22px}
+.block h2{font-size:22px;margin:0 0 4px;font-variation-settings:"wdth" 75}
+.block .sub{color:var(--muted);font-size:14px;margin:0 0 10px}
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 8px}
+.ex.pair{border-left:4px solid var(--accent)}
+.ex.complete{border-color:var(--done);box-shadow:inset 0 0 0 1px var(--done)}
+.ex-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ex-name{font-weight:650;font-size:17px}
+.ex-scheme{font-variation-settings:"wdth" 75;font-weight:700;white-space:nowrap;font-size:17px}
+.ex-why{color:var(--muted);font-size:14px;margin:4px 0 10px}
+.tag{display:inline-block;font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:2px}
+.row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.set{width:38px;height:38px;border-radius:50%;padding:0;font-weight:600}
+.set[aria-pressed="true"]{background:var(--done);border-color:var(--done);color:var(--on-done)}
+.kg{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:13px;color:var(--muted)}
+.kg input{width:70px;padding:7px 8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:15px;text-align:right}
+.last{font-size:12px;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-weight:500}
+.scroll{overflow-x:auto}
+.form{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:0 0 12px}
+.form label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.form input{padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;width:110px}
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.rules h3{margin:14px 0 4px;font-size:17px}.rules h3:first-child{margin-top:0}
+.rules p{margin:0 0 6px;font-size:15px}
+.sync{font-size:12px;color:var(--muted);margin-top:30px}
+.hidden{display:none}
+@media (max-width:560px){.kg{margin-left:0;width:100%}.tabs{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="kicker">Plan pod rekompozycję, 3 treningi po ~60 min</p>
+  <h1><span>Szersza góra.</span><span class="narrow">Węższa talia.</span></h1>
+  <div class="stats">
+    <span><b>166</b>cm</span><span><b>68</b>kg</span><span><b>3</b>treningi / tydz.</span><span><b>~60</b>min</span>
+  </div>
+  <div class="note">
+    <p>Proporcje „athletic” budują trzy rzeczy: pełniejsza górna klatka, szersze barki (boczny akton) i szersze plecy. To optycznie zwęża talię i biodra. Dlatego wznosy bokiem i ściąganie drążka są w planie tak samo ważne jak wyciskanie.</p>
+    <p>Oponkę i boczki odsłoni niższy poziom tkanki tłuszczowej: lekki deficyt, dużo białka i kroki. Brzuch trenujemy porządnie w każdym dniu, żeby było co odsłaniać.</p>
+    <p>Rozłóż treningi z dniem przerwy między nimi, np. pon / śr / pt. W tygodniu, w którym dasz radę tylko 2 razy, zrób A i B.</p>
+  </div>
+
+  <div class="bar">
+    <div class="week">Tydzień <b id="weekNo">1</b></div>
+    <button id="clearBtn">Wyczyść ten trening</button>
+    <button id="newWeekBtn" class="primary">Zapisz i zacznij nowy tydzień</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" data-tab="A" aria-selected="true"><small>Dzień 1</small><strong>A: klatka + brzuch</strong><div class="progress"><i id="pA"></i></div></button>
+    <button role="tab" data-tab="B" aria-selected="false"><small>Dzień 2</small><strong>B: plecy + barki</strong><div class="progress"><i id="pB"></i></div></button>
+    <button role="tab" data-tab="C" aria-selected="false"><small>Dzień 3</small><strong>C: góra + ramiona</strong><div class="progress"><i id="pC"></i></div></button>
+    <button role="tab" data-tab="log" aria-selected="false"><small>Postęp</small><strong>Dziennik</strong></button>
+  </div>
+
+  <div id="view"></div>
+
+  <p class="sync" id="sync">Zapisywanie: lokalnie w tej przeglądarce.</p>
+</div>
+
+<script>
+const PLAN = {
+  A: {
+    blocks: [
+      { title:"Rozgrzewka", sub:"5 min: rowerek lub orbitrek, krążenia ramion, 2 lekkie serie pierwszego ćwiczenia.", items:[] },
+      { title:"Część siłowa", sub:"Pary oznaczone niebieską krawędzią robisz naprzemiennie: seria jednego, 60–90 s przerwy, seria drugiego.", items:[
+        {id:"a1",yt:"wyciskanie hantli na ławce skośnej",name:"Wyciskanie hantli na ławce skośnej (30°)",sets:4,reps:"8–10",tag:"klatka",why:"Główne ćwiczenie planu. Górna część klatki daje efekt „pełniejszej” klatki w koszulce.",pair:true},
+        {id:"a1b",name:"Goblet squat (przysiad z hantlem)",sets:3,reps:"10–12",tag:"nogi",why:"Nogi w przerwie między seriami klatki. Tempo spokojne, bez zajeżdżania się.",pair:true},
+        {id:"a2",name:"Wyciskanie hantli na ławce płaskiej",sets:3,reps:"8–10",tag:"klatka",why:"Druga porcja objętości dla klatki, pełny zakres ruchu, łokcie ok. 45° od tułowia."},
+        {id:"a3",name:"Wiosłowanie hantlem jednorącz",sets:3,reps:"10–12",tag:"plecy",why:"Równowaga dla wyciskań i grubsze górne plecy.",pair:true},
+        {id:"a4",name:"Wznosy bokiem hantlami",sets:4,reps:"12–15",tag:"barki",why:"Najważniejsze ćwiczenie „na proporcje”: szersze barki = węższa talia optycznie. Lekko, bez bujania.",pair:true},
+        {id:"a5",yt:"rozpiętki na bramie",name:"Rozpiętki na bramie (linki od góry lub na wysokości klatki)",sets:3,reps:"12–15",tag:"klatka",why:"Kształt i zarys klatki. Pauza 1 s w pełnym skurczu."},
+        {id:"a6",name:"Prostowanie ramion na wyciągu (linka)",sets:2,reps:"12–15",tag:"ramiona",why:"Triceps to 2/3 objętości ramienia, wystarczą 2 serie."}
+      ]},
+      { title:"Blok brzucha", sub:"~12–15 min. Przerwy 45–60 s.", items:[
+        {id:"a7",name:"Unoszenie nóg w zwisie (leg raises)",sets:3,reps:"10–15",tag:"brzuch",why:"Twoje ulubione. Podwijaj miednicę na górze, bez bujania. Za łatwe? Proste nogi."},
+        {id:"a8",name:"Pallof press (antyrotacja na wyciągu)",sets:3,reps:"10 / strona",tag:"core",why:"Mięśnie skośne pracują stabilizująco, bez rozbudowy boków talii."},
+        {id:"a9",name:"Dead bug",sets:3,reps:"8 / strona",tag:"core",why:"Dolny brzuch i kontrola miednicy. Lędźwia cały czas dociśnięte do podłogi."},
+        {id:"a10",name:"Próżnia brzuszna (stomach vacuum)",sets:3,reps:"20–30 s",tag:"talia",why:"Trening mięśnia poprzecznego, pomaga trzymać płaski brzuch i węższą talię w postawie."}
+      ]}
+    ]
+  },
+  B: {
+    blocks: [
+      { title:"Rozgrzewka", sub:"5 min: rowerek, band pull-aparts, 2 lekkie serie ściągania.", items:[] },
+      { title:"Część siłowa", sub:"Pary oznaczone niebieską krawędzią robisz naprzemiennie.", items:[
+        {id:"b1",yt:"ściąganie drążka szerokim chwytem",name:"Ściąganie drążka szerokim chwytem (lub podciąganie z gumą)",sets:4,reps:"8–10",tag:"plecy",why:"Szerokość pleców, czyli litera V. Łokcie do kieszeni, klatka do drążka.",pair:true},
+        {id:"b1b",name:"Rumuński martwy ciąg z hantlami",sets:3,reps:"10",tag:"nogi",why:"Tył ud i pośladki, poprawia postawę. Plecy proste, biodra w tył.",pair:true},
+        {id:"b2",yt:"pompki na poręczach klatka",name:"Pompki na poręczach lub wyciskanie na maszynie",sets:3,reps:"8–12",tag:"klatka",why:"Drugi raz klatka w tygodniu, bo to priorytet. Na poręczach lekko pochyl tułów do przodu."},
+        {id:"b3",name:"Wyciskanie hantli nad głowę siedząc",sets:3,reps:"8–10",tag:"barki",why:"Przedni i boczny akton, stabilna obręcz barkowa.",pair:true},
+        {id:"b4",name:"Face pull na wyciągu",sets:3,reps:"12–15",tag:"barki",why:"Tylny akton i górne plecy: lepsza postawa, barki „rozłożone”, nie zaokrążone.",pair:true},
+        {id:"b5",name:"Wiosłowanie siedząc na wyciągu",sets:3,reps:"10–12",tag:"plecy",why:"Grubość środka pleców. Ściągnij łopatki, pauza 1 s."},
+        {id:"b6",name:"Uginanie ramion z hantlami na ławce skośnej",sets:2,reps:"10–12",tag:"ramiona",why:"Biceps w rozciągnięciu, dobre na kształt bez dużej masy.",pair:true},
+        {id:"b7",name:"Wznosy bokiem na wyciągu jednorącz",sets:2,reps:"15",tag:"barki",why:"Kolejna porcja dla bocznego aktonu, bo najbardziej zmienia proporcje.",pair:true}
+      ]},
+      { title:"Blok brzucha", sub:"~12–15 min. Przerwy 45–60 s.", items:[
+        {id:"b8",yt:"allahy brzuszki na wyciągu",name:"Allahy (brzuszki na wyciągu klęcząc)",sets:3,reps:"12–15",tag:"brzuch",why:"Obciążony brzuch prosty, żeby „kaloryfer” był wyraźniejszy po redukcji."},
+        {id:"b9",yt:"ab wheel rollout",name:"Rollout (kółko lub sztanga)",sets:3,reps:"8–10",tag:"core",why:"Mocna antyekstensja. Nie wyginaj lędźwi, zasięg zwiększaj stopniowo."},
+        {id:"b10",name:"Reverse crunch na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Dolna część brzucha, ruch z miednicy, powoli w dół."},
+        {id:"b11",name:"Deska bokiem",sets:2,reps:"30–45 s / strona",tag:"core",why:"Stabilizacja boczna bez dokładania ciężaru na skośne."}
+      ]}
+    ]
+  }
+};
+PLAN.C = {
+    blocks: [
+      { title:"Rozgrzewka", sub:"5 min: rowerek, krążenia ramion, 2 lekkie serie pierwszego ćwiczenia.", items:[] },
+      { title:"Część siłowa", sub:"Lżejszy, bardziej „pompujący” dzień. Pary oznaczone niebieską krawędzią robisz naprzemiennie.", items:[
+        {id:"c1",yt:"wyciskanie na suwnicy smitha skos",name:"Wyciskanie na maszynie Smitha lub maszynie na skosie",sets:3,reps:"8–12",tag:"klatka",why:"Trzeci bodziec dla górnej klatki w tygodniu. Maszyna pozwala skupić się na klatce, a nie na stabilizacji.",pair:true},
+        {id:"c1b",name:"Wykroki bułgarskie",sets:2,reps:"10 / noga",tag:"nogi",why:"Nogi i pośladki jednostronnie, bez dużego ciężaru. Tułów lekko pochylony.",pair:true},
+        {id:"c2",name:"Ściąganie drążka wąskim chwytem neutralnym",sets:3,reps:"10–12",tag:"plecy",why:"Inny kąt niż w dniu B: dolne partie najszerszego, pełniejsza linia V.",pair:true},
+        {id:"c3",yt:"wznosy bokiem hantlami",name:"Wznosy bokiem hantlami (drop set w ostatniej serii)",sets:3,reps:"12–15",tag:"barki",why:"Trzeci raz boczny akton. Ostatnia seria: po upadku zmniejsz ciężar o ok. 30% i dokończ.",pair:true},
+        {id:"c4",name:"Odwrotne rozpiętki na maszynie (reverse pec deck)",sets:3,reps:"15",tag:"barki",why:"Tylny akton i górne plecy: barki wyglądają szerzej z każdej strony, lepsza postawa."},
+        {id:"c5",name:"Rozpiętki na maszynie (pec deck)",sets:2,reps:"12–15",tag:"klatka",why:"Wykończenie klatki, pauza 1 s w pełnym skurczu."},
+        {id:"c6",name:"Uginanie ramion młotkowe",sets:2,reps:"10–12",tag:"ramiona",why:"Mięsień ramienny i przedramię: ręka wygląda grubiej z boku.",pair:true},
+        {id:"c7",name:"Prostowanie ramion nad głową na wyciągu",sets:2,reps:"12–15",tag:"ramiona",why:"Długa głowa tricepsa, pracuje najlepiej w rozciągnięciu.",pair:true}
+      ]},
+      { title:"Blok brzucha", sub:"~12 min. Przerwy 45–60 s.", items:[
+        {id:"c8",yt:"unoszenie nóg leżąc na ławce",name:"Unoszenie nóg leżąc na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Twoje leg raises w wersji bez zwisu. Lędźwia dociśnięte, nogi opuszczaj powoli."},
+        {id:"c9",name:"Hollow hold",sets:3,reps:"20–30 s",tag:"core",why:"Napięcie całego brzucha w jednej pozycji, świetne pod kontrolę dolnego brzucha."},
+        {id:"c10",yt:"suitcase carry",name:"Spacer farmera jednorącz (suitcase carry)",sets:3,reps:"30 m / strona",tag:"core",why:"Skośne pracują, żeby tułów się nie przechylał. Stabilizacja zamiast rozbudowy boków."},
+        {id:"c11",name:"Próżnia brzuszna (stomach vacuum)",sets:2,reps:"20–30 s",tag:"talia",why:"Na koniec, dla kontroli mięśnia poprzecznego i węższej talii w postawie."}
+      ]}
+    ]
+};
+const ALL = [...PLAN.A.blocks, ...PLAN.B.blocks, ...PLAN.C.blocks].flatMap(b=>b.items);
+
+let state = { week:1, done:{}, kg:{}, history:[], body:[] };
+let tab = "A";
+let db = null, docRef = null, saveTimer = null;
+const LS_KEY = "plan2x_state_v1";
+
+function lsLoad(){ try{ const s = localStorage.getItem(LS_KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} }
+function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+function save(){
+  lsSave();
+  if(!docRef) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{ await docRef.set(JSON.parse(JSON.stringify(state))); setSync("Zapisano na Twoim koncie."); }
+    catch(e){ setSync("Nie udało się zapisać na koncie, dane są w tej przeglądarce."); }
+  }, 600);
+}
+function setSync(t){ document.getElementById("sync").textContent = "Zapisywanie: " + t; }
+
+function lastKg(id){
+  for(let i=state.history.length-1;i>=0;i--){ const h=state.history[i]; if(h.kg && h.kg[id]) return {kg:h.kg[id], week:h.week}; }
+  return null;
+}
+function pct(day){
+  const items = PLAN[day].blocks.flatMap(b=>b.items);
+  let tot=0, d=0;
+  items.forEach(it=>{ tot+=it.sets; d+=(state.done[it.id]||[]).filter(Boolean).length; });
+  return tot? Math.round(d/tot*100):0;
+}
+function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
+
+function render(){
+  document.getElementById("weekNo").textContent = state.week;
+  document.getElementById("pA").style.width = pct("A")+"%";
+  document.getElementById("pB").style.width = pct("B")+"%";
+  document.getElementById("pC").style.width = pct("C")+"%";
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===tab));
+  document.getElementById("clearBtn").classList.toggle("hidden", tab==="log");
+  const v = document.getElementById("view");
+  if(tab==="log"){ v.innerHTML = renderLog(); bindLog(); return; }
+  v.innerHTML = PLAN[tab].blocks.map(b=>`
+    <section class="block">
+      <h2>${b.title}</h2><p class="sub">${b.sub}</p>
+      ${b.items.map(it=>{
+        const done = state.done[it.id]||[];
+        const all = done.filter(Boolean).length===it.sets;
+        const last = lastKg(it.id);
+        return `<div class="ex ${it.pair?'pair':''} ${all?'complete':''}">
+          <div class="ex-head"><div class="ex-name">${it.name}</div><div class="ex-scheme">${it.sets} × ${it.reps}</div></div>
+          <p class="ex-why"><span class="tag">${it.tag}</span>${it.why}</p>
+          <div class="row">
+            ${Array.from({length:it.sets},(_,i)=>`<button class="set" data-ex="${it.id}" data-i="${i}" aria-pressed="${!!done[i]}" aria-label="Seria ${i+1}">${i+1}</button>`).join("")}
+            <label class="kg">ciężar (kg)<input inputmode="decimal" data-kg="${it.id}" value="${esc(state.kg[it.id]||"")}" placeholder="–"></label>
+          </div>
+          <a class="yt" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent((it.yt||it.name)+' technika')}">Zobacz, jak to zrobić (YouTube)</a>
+          ${last?`<div class="last">Ostatnio: ${esc(last.kg)} kg (tydz. ${last.week})</div>`:""}
+        </div>`;
+      }).join("")}
+    </section>`).join("") + rulesHtml();
+  v.querySelectorAll(".set").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.ex, i=+b.dataset.i;
+    state.done[id] = state.done[id]||[];
+    state.done[id][i] = !state.done[id][i];
+    save(); render();
+  });
+  v.querySelectorAll("input[data-kg]").forEach(inp=>inp.onchange=()=>{ state.kg[inp.dataset.kg]=inp.value.trim(); save(); });
+}
+
+function rulesHtml(){
+  return `<section class="block"><h2>Zasady</h2><div class="rules">
+    <h3>Progresja</h3><p>Gdy we wszystkich seriach zrobisz górną granicę powtórzeń z dobrą techniką, dołóż najmniejszy możliwy ciężar i wróć do dolnej granicy. Zostawiaj 1–2 powtórzenia zapasu.</p>
+    <h3>Tempo i przerwy</h3><p>Opuszczanie 2–3 s. Przerwy 60–90 s w parach, 90–120 s przy pierwszym ćwiczeniu. Jeśli po dniu A albo B czujesz, że mięśnie nie zdążyły się zregenerować przed C, zrób w dniu C o jedną serię mniej w każdym ćwiczeniu. Dzięki parom mieścisz się w godzinie.</p>
+    <h3>Odżywianie pod talię</h3><p>Przy 68 kg celuj w ok. 110–135 g białka dziennie (1,6–2 g/kg). Lekki deficyt, ok. 300 kcal poniżej zapotrzebowania, daje spadek ok. 0,25–0,5 kg tygodniowo i pozwala utrzymać siłę. Jeśli siła mocno spada, zjedz więcej.</p>
+    <h3>Poza siłownią: bieżnia zamiast kroków</h3><p>Pełne 8–10 tys. kroków to ok. 70–85 min marszu, więc nie ma sensu gonić tej liczby na bieżni. Zamiast tego po każdym treningu zrób 20–30 min marszu pod górę: nachylenie 8–12%, prędkość 4,5–5,5 km/h, bez trzymania się poręczy. To ok. 2,5–3,5 tys. kroków i ok. 150–250 kcal na sesję. W dni bez siłowni wystarczy zwykły ruch, np. schody zamiast windy albo 10 min spaceru po posiłku.</p>
+    <h3>Co 6–8 tygodni</h3><p>Zrób lżejszy tydzień (mniej serii, ten sam ciężar) i sprawdź obwód talii w dzienniku. Jeśli talia stoi w miejscu przez 3–4 tygodnie, zmniejsz nieco kalorie albo dołóż kroki.</p>
+  </div></section>`;
+}
+
+function renderLog(){
+  const body = [...state.body].reverse();
+  const hist = [...state.history].reverse();
+  const keyEx = ["a1","a4","b1","b3","a7"];
+  return `<section class="block"><h2>Waga i talia</h2>
+    <p class="sub">Mierz raz w tygodniu, rano na czczo. Talię w linii pępka, na swobodnym wydechu. To najlepszy wskaźnik, czy oponka się zmniejsza.</p>
+    <div class="form">
+      <label>Data<input type="date" id="bDate" value="${new Date().toISOString().slice(0,10)}"></label>
+      <label>Waga (kg)<input id="bKg" inputmode="decimal" placeholder="68"></label>
+      <label>Talia (cm)<input id="bWaist" inputmode="decimal" placeholder="np. 80"></label>
+      <button class="primary" id="bAdd">Dodaj pomiar</button>
+    </div>
+    ${body.length?`<div class="scroll"><table><tr><th>Data</th><th>Waga</th><th>Talia</th><th></th></tr>
+      ${body.map((r,i)=>`<tr><td>${esc(r.date)}</td><td>${esc(r.kg||"–")}</td><td>${esc(r.waist||"–")}</td><td><button data-del="${body.length-1-i}" aria-label="Usuń pomiar">Usuń</button></td></tr>`).join("")}
+    </table></div>`:`<p class="sub">Brak pomiarów. Dodaj pierwszy, żeby mieć punkt odniesienia.</p>`}
+  </section>
+  <section class="block"><h2>Historia tygodni</h2>
+    <p class="sub">Tydzień trafia tutaj po kliknięciu „Zapisz i zacznij nowy tydzień”. Pokazuję ciężary z kluczowych ćwiczeń.</p>
+    ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
+      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td>${keyEx.map(id=>`<td>${esc((h.kg&&h.kg[id])||"–")}</td>`).join("")}</tr>`).join("")}
+    </table></div>`:`<p class="sub">Jeszcze nic. Po pierwszym tygodniu zobaczysz tu swoje ciężary.</p>`}
+  </section>`;
+}
+function bindLog(){
+  document.getElementById("bAdd").onclick=()=>{
+    const kg=document.getElementById("bKg").value.trim(), waist=document.getElementById("bWaist").value.trim();
+    if(!kg && !waist) return;
+    state.body.push({date:document.getElementById("bDate").value, kg, waist});
+    state.body.sort((a,b)=>a.date<b.date?-1:1);
+    save(); render();
+  };
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ state.body.splice(+b.dataset.del,1); save(); render(); });
+}
+
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ tab=b.dataset.tab; render(); window.scrollTo({top:document.querySelector(".tabs").offsetTop-10}); });
+document.getElementById("clearBtn").onclick=()=>{
+  if(!confirm("Wyczyścić odhaczone serie w tym treningu? Ciężary zostaną.")) return;
+  PLAN[tab].blocks.flatMap(b=>b.items).forEach(it=>delete state.done[it.id]);
+  save(); render();
+};
+document.getElementById("newWeekBtn").onclick=()=>{
+  if(!confirm("Zapisać tydzień "+state.week+" w historii i zacząć nowy?")) return;
+  state.history.push({week:state.week, pA:pct("A"), pB:pct("B"), pC:pct("C"), kg:{...state.kg}, date:new Date().toISOString().slice(0,10)});
+  state.week++; state.done={};
+  save(); render();
+};
+
+lsLoad(); render();
+
+(async ()=>{
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const [d, u] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if(!d || !u) return;
+    const id = await u.id();
+    if(!id) return;
+    db = d; docRef = db.doc("data/users/"+id+"/plan/state");
+    const snap = await docRef.get();
+    if(snap.exists){ state = Object.assign({week:1,done:{},kg:{},history:[],body:[]}, snap.data()); lsSave(); render(); }
+    setSync("na Twoim koncie, prywatnie. Działa na telefonie i komputerze.");
+  }catch(e){ docRef=null; }
+})();
+</script>
+</body>
+</html>
