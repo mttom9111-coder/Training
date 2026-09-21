@@ -64,9 +64,20 @@ button.day[aria-pressed="true"] .dn,button.day[aria-pressed="true"] .ds{color:va
 button.day[aria-pressed="true"] .progress{background:rgba(127,127,127,.45)}
 button.day[aria-pressed="true"] .progress i{background:var(--bg)}
 .day.rest{border-style:dashed}
+.day.sum{background:transparent;border-color:transparent;justify-content:center}
+.day.sum .row2{font-size:14px;color:var(--muted)}
+.day.sum .row2 b{color:var(--ink);font-size:20px;font-variation-settings:"wdth" 75;margin-right:4px}
 .day textarea{flex:1;width:100%;min-height:52px;resize:none;border:none;background:transparent;color:var(--ink);font:inherit;font-size:13px;line-height:1.35;padding:0}
 .day textarea::placeholder{color:var(--muted);opacity:.7}
 .day textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.timer{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 22px}
+.timer .tm{font-size:40px;font-weight:800;font-variation-settings:"wdth" 70;font-variant-numeric:tabular-nums;line-height:1;margin-right:auto}
+.timer .tm small{display:block;font-size:13px;font-weight:500;color:var(--muted);font-variation-settings:"wdth" 100;margin-top:4px}
+.timer.running{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.timer.running .tm{color:var(--accent)}
+.floatbar{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px));background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:12px;justify-content:center;z-index:10}
+.floatbar b{font-size:22px;font-variant-numeric:tabular-nums;font-variation-settings:"wdth" 70}
+.floatbar button{background:var(--bg);color:var(--ink);border-color:var(--bg)}
 .sauna{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .sauna p{margin:2px 0 0;font-size:14px;color:var(--muted);max-width:52ch}
 .sauna button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -80,6 +91,10 @@ button.day[aria-pressed="true"] .progress i{background:var(--bg)}
 .ex.complete{border-color:var(--done);box-shadow:inset 0 0 0 1px var(--done)}
 .ex-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .ex-name{font-weight:650;font-size:17px}
+.ex-name .alt{font-weight:400;font-size:14px;color:var(--muted)}
+.vac{display:flex;align-items:center;gap:6px;font-size:12px;color:inherit;margin-top:4px;cursor:pointer}
+.vac input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+.day.sel .vac input{accent-color:var(--bg)}
 .ex-scheme{font-variation-settings:"wdth" 75;font-weight:700;white-space:nowrap;font-size:17px}
 .ex-why{color:var(--muted);font-size:14px;margin:4px 0 10px}
 .tag{display:inline-block;font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 7px;border-radius:5px;margin-right:6px;vertical-align:2px}
@@ -104,7 +119,7 @@ th{color:var(--muted);font-weight:500}
 .rules p{margin:0 0 6px;font-size:15px}
 .sync{font-size:12px;color:var(--muted);margin-top:30px}
 .hidden{display:none}
-@media (max-width:560px){.weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:96px}}
+@media (max-width:560px){body{border-width:4px}.wrap{padding:22px 12px 60px}.weekgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:96px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -139,6 +154,7 @@ th{color:var(--muted);font-weight:500}
 
   <div id="view"></div>
 
+  <p class="sync">Wersja 10 (stoper)</p>
   <p class="sync" id="sync">Zapisywanie: lokalnie w tej przeglądarce.</p>
 </div>
 
@@ -149,39 +165,38 @@ const PLAN = {
       { title:"Rozgrzewka", sub:"5 min: rowerek lub orbitrek, krążenia ramion, 2 lekkie serie pierwszego ćwiczenia.", items:[] },
       { title:"Część siłowa", sub:"Pary oznaczone niebieską krawędzią robisz naprzemiennie: seria jednego, 60–90 s przerwy, seria drugiego.", items:[
         {id:"a1",yt:"wyciskanie hantli na ławce skośnej",name:"Wyciskanie hantli na ławce skośnej (30°)",sets:4,reps:"8–10",tag:"klatka",why:"Główne ćwiczenie planu. Górna część klatki daje efekt „pełniejszej” klatki w koszulce.",pair:true},
-        {id:"a1b",name:"Goblet squat (przysiad z hantlem)",sets:3,reps:"10–12",tag:"nogi",why:"Nogi w przerwie między seriami klatki. Tempo spokojne, bez zajeżdżania się.",pair:true},
-        {id:"a2",name:"Wyciskanie hantli na ławce płaskiej",sets:3,reps:"8–10",tag:"klatka",why:"Druga porcja objętości dla klatki, pełny zakres ruchu, łokcie ok. 45° od tułowia."},
-        {id:"a3",name:"Wiosłowanie hantlem jednorącz",sets:3,reps:"10–12",tag:"plecy",why:"Równowaga dla wyciskań i grubsze górne plecy.",pair:true},
-        {id:"a4",name:"Wznosy bokiem hantlami",sets:4,reps:"12–15",tag:"barki",why:"Najważniejsze ćwiczenie „na proporcje”: szersze barki = węższa talia optycznie. Lekko, bez bujania.",pair:true},
-        {id:"a5",yt:"rozpiętki na bramie",name:"Rozpiętki na bramie (linki od góry lub na wysokości klatki)",sets:3,reps:"12–15",tag:"klatka",why:"Kształt i zarys klatki. Pauza 1 s w pełnym skurczu."},
+        {id:"a1l",yt:"prostowanie nóg na maszynie",name:"Prostowanie nóg na maszynie",sets:3,reps:"12–15",tag:"nogi",why:"Przód ud w przerwie między seriami klatki. Spokojne tempo, pauza 1 s na górze.",pair:true},
+        {id:"a2",name:"Wyciskanie hantli na ławce płaskiej",alt:"chest press na maszynie",sets:3,reps:"8–10",tag:"klatka",why:"Druga porcja objętości dla klatki, pełny zakres ruchu, łokcie ok. 45° od tułowia."},
+        {id:"a3",name:"Wiosłowanie hantlem jednorącz z oparciem o ławkę",alt:"wiosłowanie na maszynie z oparciem na klatkę",sets:3,reps:"10–12",tag:"plecy",why:"Równowaga dla wyciskań i grubsze górne plecy.",pair:true},
+        {id:"a4",yt:"wznosy bokiem hantlami",name:"Wznosy bokiem hantlami",alt:"maszyna do wznosów bokiem",sets:4,reps:"12–15",tag:"barki",why:"Najważniejsze ćwiczenie „na proporcje”: szersze barki = węższa talia optycznie. Lekko, bez bujania.",pair:true},
+        {id:"a5",yt:"rozpiętki na bramie",name:"Rozpiętki na bramie",alt:"pec deck, czyli rozpiętki na maszynie",sets:3,reps:"12–15",tag:"klatka",why:"Kształt i zarys klatki. Pauza 1 s w pełnym skurczu."},
         {id:"a6",name:"Prostowanie ramion na wyciągu (linka)",sets:2,reps:"12–15",tag:"ramiona",why:"Triceps to 2/3 objętości ramienia, wystarczą 2 serie."}
       ]},
-      { title:"Blok brzucha", sub:"~12–15 min. Przerwy 45–60 s.", items:[
-        {id:"a7",name:"Unoszenie nóg w zwisie (leg raises)",sets:3,reps:"10–15",tag:"brzuch",why:"Twoje ulubione. Podwijaj miednicę na górze, bez bujania. Za łatwe? Proste nogi."},
-        {id:"a8",name:"Pallof press (antyrotacja na wyciągu)",sets:3,reps:"10 / strona",tag:"core",why:"Mięśnie skośne pracują stabilizująco, bez rozbudowy boków talii."},
-        {id:"a9",name:"Dead bug",sets:3,reps:"8 / strona",tag:"core",why:"Dolny brzuch i kontrola miednicy. Lędźwia cały czas dociśnięte do podłogi."},
-        {id:"a10",name:"Próżnia brzuszna (stomach vacuum)",sets:3,reps:"20–30 s",tag:"talia",why:"Trening mięśnia poprzecznego, pomaga trzymać płaski brzuch i węższą talię w postawie."}
+      { title:"Blok brzucha", sub:"~12 min, tylko maszyny, ławka i wyciąg. Przerwy 45–60 s.", items:[
+        {id:"a7",yt:"unoszenie nóg na poręczach captain's chair",name:"Unoszenie nóg w podporze na poręczach (leg raises)",alt:"unoszenie nóg w zwisie na drążku",sets:3,reps:"10–15",tag:"brzuch",why:"Twoje ulubione. Podwijaj miednicę na górze, bez bujania. Za łatwe? Proste nogi."},
+        {id:"a8",yt:"pallof press",name:"Pallof press na wyciągu",alt:"stojąc bokiem do wyciągu, wypychasz uchwyt przed klatkę i nie dajesz się obrócić",sets:3,reps:"10 / strona",tag:"core",why:"Mięśnie skośne pracują stabilizująco, bez rozbudowy boków talii."},
+        {id:"a8m",yt:"maszyna do brzuszków ab crunch",name:"Brzuszki na maszynie",alt:"allahy na wyciągu",sets:3,reps:"12–15",tag:"brzuch",why:"Obciążony brzuch prosty. Ruch z zaokrąglenia tułowia, nie z bioder."}
       ]}
     ]
   },
   B: {
     blocks: [
-      { title:"Rozgrzewka", sub:"5 min: rowerek, band pull-aparts, 2 lekkie serie ściągania.", items:[] },
+      { title:"Rozgrzewka", sub:"5 min: rowerek, 2 lekkie serie ściągania drążka.", items:[] },
       { title:"Część siłowa", sub:"Pary oznaczone niebieską krawędzią robisz naprzemiennie.", items:[
-        {id:"b1",yt:"ściąganie drążka szerokim chwytem",name:"Ściąganie drążka szerokim chwytem (lub podciąganie z gumą)",sets:4,reps:"8–10",tag:"plecy",why:"Szerokość pleców, czyli litera V. Łokcie do kieszeni, klatka do drążka.",pair:true},
-        {id:"b1b",name:"Rumuński martwy ciąg z hantlami",sets:3,reps:"10",tag:"nogi",why:"Tył ud i pośladki, poprawia postawę. Plecy proste, biodra w tył.",pair:true},
-        {id:"b2",yt:"pompki na poręczach klatka",name:"Pompki na poręczach lub wyciskanie na maszynie",sets:3,reps:"8–12",tag:"klatka",why:"Drugi raz klatka w tygodniu, bo to priorytet. Na poręczach lekko pochyl tułów do przodu."},
-        {id:"b3",name:"Wyciskanie hantli nad głowę siedząc",sets:3,reps:"8–10",tag:"barki",why:"Przedni i boczny akton, stabilna obręcz barkowa.",pair:true},
-        {id:"b4",name:"Face pull na wyciągu",sets:3,reps:"12–15",tag:"barki",why:"Tylny akton i górne plecy: lepsza postawa, barki „rozłożone”, nie zaokrążone.",pair:true},
+        {id:"b1",yt:"ściąganie drążka szerokim chwytem",name:"Ściąganie drążka wyciągu szerokim chwytem",sets:4,reps:"8–10",tag:"plecy",why:"Szerokość pleców, czyli litera V. Łokcie do kieszeni, klatka do drążka.",pair:true},
+        {id:"b1l",yt:"uginanie nóg na maszynie",name:"Uginanie nóg na maszynie (siedząc lub leżąc)",sets:3,reps:"10–12",tag:"nogi",why:"Tył ud w przerwie między seriami pleców. Powoli w dół.",pair:true},
+        {id:"b2m",yt:"chest press maszyna",name:"Wyciskanie na maszynie (chest press)",sets:3,reps:"8–12",tag:"klatka",why:"Drugi raz klatka w tygodniu, bo to priorytet. Uchwyty na wysokości środka klatki."},
+        {id:"b3",yt:"wyciskanie hantli nad głowę siedząc",name:"Wyciskanie hantli nad głowę siedząc",alt:"maszyna do wyciskania nad głowę",sets:3,reps:"8–10",tag:"barki",why:"Przedni i boczny akton, stabilna obręcz barkowa.",pair:true},
+        {id:"b4",yt:"face pull wyciąg",name:"Face pull na wyciągu",alt:"odwrotne rozpiętki na maszynie (reverse pec deck)",sets:3,reps:"12–15",tag:"barki",why:"Tylny akton i górne plecy: lepsza postawa, barki „rozłożone”, nie zaokrąglone.",pair:true},
         {id:"b5",name:"Wiosłowanie siedząc na wyciągu",sets:3,reps:"10–12",tag:"plecy",why:"Grubość środka pleców. Ściągnij łopatki, pauza 1 s."},
-        {id:"b6",name:"Uginanie ramion z hantlami na ławce skośnej",sets:2,reps:"10–12",tag:"ramiona",why:"Biceps w rozciągnięciu, dobre na kształt bez dużej masy.",pair:true},
-        {id:"b7",name:"Wznosy bokiem na wyciągu jednorącz",sets:2,reps:"15",tag:"barki",why:"Kolejna porcja dla bocznego aktonu, bo najbardziej zmienia proporcje.",pair:true}
+        {id:"b6",yt:"uginanie ramion z hantlami na ławce skośnej",name:"Uginanie ramion z hantlami na ławce skośnej",alt:"uginanie na modlitewniku lub maszynie do bicepsa",sets:2,reps:"10–12",tag:"ramiona",why:"Biceps w rozciągnięciu, dobre na kształt bez dużej masy.",pair:true},
+        {id:"b7",yt:"wznosy bokiem na wyciągu jednorącz",name:"Wznosy bokiem na wyciągu jednorącz",alt:"wznosy bokiem hantlami",sets:2,reps:"15",tag:"barki",why:"Kolejna porcja dla bocznego aktonu, bo najbardziej zmienia proporcje.",pair:true}
       ]},
-      { title:"Blok brzucha", sub:"~12–15 min. Przerwy 45–60 s.", items:[
-        {id:"b8",yt:"allahy brzuszki na wyciągu",name:"Allahy (brzuszki na wyciągu klęcząc)",sets:3,reps:"12–15",tag:"brzuch",why:"Obciążony brzuch prosty, żeby „kaloryfer” był wyraźniejszy po redukcji."},
-        {id:"b9",yt:"ab wheel rollout",name:"Rollout (kółko lub sztanga)",sets:3,reps:"8–10",tag:"core",why:"Mocna antyekstensja. Nie wyginaj lędźwi, zasięg zwiększaj stopniowo."},
-        {id:"b10",name:"Reverse crunch na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Dolna część brzucha, ruch z miednicy, powoli w dół."},
-        {id:"b11",name:"Deska bokiem",sets:2,reps:"30–45 s / strona",tag:"core",why:"Stabilizacja boczna bez dokładania ciężaru na skośne."}
+      { title:"Blok brzucha", sub:"~12 min, tylko maszyny, ławka i wyciąg. Przerwy 45–60 s.", items:[
+        {id:"b8",yt:"allahy brzuszki na wyciągu",name:"Allahy (brzuszki na wyciągu klęcząc)",alt:"brzuszki na maszynie",sets:3,reps:"12–15",tag:"brzuch",why:"Obciążony brzuch prosty, żeby „kaloryfer” był wyraźniejszy po redukcji."},
+        {id:"b10",yt:"reverse crunch na ławce",name:"Reverse crunch na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Dolna część brzucha. Leżysz na ławce, trzymasz się jej za głową, ruch z miednicy, powoli w dół."},
+        {id:"b12",yt:"suitcase carry",name:"Spacer z hantlem w jednej ręce (suitcase carry)",alt:"stanie z ciężkim hantlem w jednej ręce, 30 s",sets:3,reps:"30 m / strona",tag:"core",why:"Skośne pracują, żeby tułów się nie przechylał. Stabilizacja zamiast rozbudowy boków."},
+        {id:"b13",yt:"wyprosty tułowia na ławce rzymskiej",name:"Wyprosty tułowia na ławce rzymskiej",alt:"maszyna do prostowania pleców",sets:2,reps:"12–15",tag:"plecy",why:"Dolne plecy i pośladki. Pomaga w postawie przy siedzącym trybie życia. Bez przeprostu na górze."}
       ]}
     ]
   }
@@ -190,26 +205,25 @@ PLAN.C = {
     blocks: [
       { title:"Rozgrzewka", sub:"5 min: rowerek, krążenia ramion, 2 lekkie serie pierwszego ćwiczenia.", items:[] },
       { title:"Część siłowa", sub:"Lżejszy, bardziej „pompujący” dzień. Pary oznaczone niebieską krawędzią robisz naprzemiennie.", items:[
-        {id:"c1",yt:"wyciskanie na suwnicy smitha skos",name:"Wyciskanie na maszynie Smitha lub maszynie na skosie",sets:3,reps:"8–12",tag:"klatka",why:"Trzeci bodziec dla górnej klatki w tygodniu. Maszyna pozwala skupić się na klatce, a nie na stabilizacji.",pair:true},
-        {id:"c1b",name:"Wykroki bułgarskie",sets:2,reps:"10 / noga",tag:"nogi",why:"Nogi i pośladki jednostronnie, bez dużego ciężaru. Tułów lekko pochylony.",pair:true},
-        {id:"c2",name:"Ściąganie drążka wąskim chwytem neutralnym",sets:3,reps:"10–12",tag:"plecy",why:"Inny kąt niż w dniu B: dolne partie najszerszego, pełniejsza linia V.",pair:true},
-        {id:"c3",yt:"wznosy bokiem hantlami",name:"Wznosy bokiem hantlami (drop set w ostatniej serii)",sets:3,reps:"12–15",tag:"barki",why:"Trzeci raz boczny akton. Ostatnia seria: po upadku zmniejsz ciężar o ok. 30% i dokończ.",pair:true},
-        {id:"c4",name:"Odwrotne rozpiętki na maszynie (reverse pec deck)",sets:3,reps:"15",tag:"barki",why:"Tylny akton i górne plecy: barki wyglądają szerzej z każdej strony, lepsza postawa."},
-        {id:"c5",name:"Rozpiętki na maszynie (pec deck)",sets:2,reps:"12–15",tag:"klatka",why:"Wykończenie klatki, pauza 1 s w pełnym skurczu."},
-        {id:"c6",name:"Uginanie ramion młotkowe",sets:2,reps:"10–12",tag:"ramiona",why:"Mięsień ramienny i przedramię: ręka wygląda grubiej z boku.",pair:true},
-        {id:"c7",name:"Prostowanie ramion nad głową na wyciągu",sets:2,reps:"12–15",tag:"ramiona",why:"Długa głowa tricepsa, pracuje najlepiej w rozciągnięciu.",pair:true}
+        {id:"c1m",yt:"incline chest press maszyna",name:"Wyciskanie na maszynie na skosie (incline chest press)",alt:"chest press z wyżej ustawionym siedziskiem albo hantle na ławce skośnej",sets:3,reps:"8–12",tag:"klatka",why:"Trzeci bodziec dla górnej klatki w tygodniu. Maszyna pozwala skupić się na klatce, a nie na stabilizacji.",pair:true},
+        {id:"c1p",yt:"prasa do nóg technika",name:"Prasa do nóg",sets:2,reps:"12",tag:"nogi",why:"Całe nogi, bez dużego ciężaru. Nie prostuj kolan do końca na górze.",pair:true},
+        {id:"c2",yt:"ściąganie drążka wąskim chwytem",name:"Ściąganie drążka wyciągu wąskim chwytem neutralnym",sets:3,reps:"10–12",tag:"plecy",why:"Inny kąt niż w dniu B: dolne partie najszerszego, pełniejsza linia V.",pair:true},
+        {id:"c3",yt:"wznosy bokiem hantlami",name:"Wznosy bokiem hantlami (drop set w ostatniej serii)",alt:"maszyna do wznosów bokiem",sets:3,reps:"12–15",tag:"barki",why:"Trzeci raz boczny akton. Ostatnia seria: po upadku zmniejsz ciężar o ok. 30% i dokończ.",pair:true},
+        {id:"c4",yt:"reverse pec deck",name:"Odwrotne rozpiętki na maszynie (reverse pec deck)",alt:"face pull na wyciągu",sets:3,reps:"15",tag:"barki",why:"Tylny akton i górne plecy: barki wyglądają szerzej z każdej strony, lepsza postawa."},
+        {id:"c5",yt:"pec deck",name:"Rozpiętki na maszynie (pec deck)",alt:"rozpiętki na bramie",sets:2,reps:"12–15",tag:"klatka",why:"Wykończenie klatki, pauza 1 s w pełnym skurczu."},
+        {id:"c6",yt:"uginanie ramion młotkowe",name:"Uginanie ramion młotkowe",alt:"uginanie liną na wyciągu",sets:2,reps:"10–12",tag:"ramiona",why:"Mięsień ramienny i przedramię: ręka wygląda grubiej z boku.",pair:true},
+        {id:"c7",yt:"prostowanie ramion nad głową wyciąg",name:"Prostowanie ramion nad głową na wyciągu",alt:"prostowanie ramion na wyciągu w dół",sets:2,reps:"12–15",tag:"ramiona",why:"Długa głowa tricepsa, pracuje najlepiej w rozciągnięciu.",pair:true}
       ]},
-      { title:"Blok brzucha", sub:"~12 min. Przerwy 45–60 s.", items:[
-        {id:"c8",yt:"unoszenie nóg leżąc na ławce",name:"Unoszenie nóg leżąc na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Twoje leg raises w wersji bez zwisu. Lędźwia dociśnięte, nogi opuszczaj powoli."},
-        {id:"c9",name:"Hollow hold",sets:3,reps:"20–30 s",tag:"core",why:"Napięcie całego brzucha w jednej pozycji, świetne pod kontrolę dolnego brzucha."},
-        {id:"c10",yt:"suitcase carry",name:"Spacer farmera jednorącz (suitcase carry)",sets:3,reps:"30 m / strona",tag:"core",why:"Skośne pracują, żeby tułów się nie przechylał. Stabilizacja zamiast rozbudowy boków."},
-        {id:"c11",name:"Próżnia brzuszna (stomach vacuum)",sets:2,reps:"20–30 s",tag:"talia",why:"Na koniec, dla kontroli mięśnia poprzecznego i węższej talii w postawie."}
+      { title:"Blok brzucha", sub:"~12 min, tylko maszyny, ławka i wyciąg. Przerwy 45–60 s.", items:[
+        {id:"c8",yt:"unoszenie nóg leżąc na ławce",name:"Unoszenie nóg leżąc na ławce",sets:3,reps:"12–15",tag:"brzuch",why:"Twoje leg raises w wersji na ławce. Trzymasz się ławki za głową, lędźwia dociśnięte, nogi opuszczaj powoli."},
+        {id:"c12",yt:"brzuszki na ławce skośnej",name:"Brzuszki na ławce skośnej (głową w dół)",alt:"brzuszki na maszynie",sets:3,reps:"12–15",tag:"brzuch",why:"Górna część brzucha prostego. Za łatwe? Trzymaj talerz lub hantel przy klatce."},
+        {id:"c13",yt:"drwal na wyciągu z góry na dół",name:"„Drwal” na wyciągu z góry na dół (woodchop)",alt:"Pallof press na wyciągu",sets:2,reps:"12 / strona",tag:"core",why:"Lekki ciężar, ruch z tułowia, biodra stabilne. Tylko 2 serie, żeby nie poszerzać talii."}
       ]}
     ]
 };
 const ALL = [...PLAN.A.blocks, ...PLAN.B.blocks, ...PLAN.C.blocks].flatMap(b=>b.items);
 
-let state = { week:1, done:{}, kg:{}, log:{}, rest:{}, sauna:{}, schedule:null, history:[], body:[] };
+let state = { week:1, done:{}, kg:{}, log:{}, rest:{}, sauna:{}, vac:{}, timer:{}, schedule:null, history:[], body:[] };
 const WEEK = [
   {k:"mon",d:"Poniedziałek",s:"Pon",t:"A"},{k:"tue",d:"Wtorek",s:"Wt"},{k:"wed",d:"Środa",s:"Śr",t:"B"},
   {k:"thu",d:"Czwartek",s:"Czw"},{k:"fri",d:"Piątek",s:"Pt",t:"C"},{k:"sat",d:"Sobota",s:"Sob"},{k:"sun",d:"Niedziela",s:"Nie"}
@@ -226,7 +240,7 @@ let tab = "A";
 let db = null, docRef = null, saveTimer = null;
 const LS_KEY = "plan2x_state_v1";
 
-function lsLoad(){ try{ const s = localStorage.getItem(LS_KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} ['log','rest','sauna'].forEach(k=>{ if(!state[k]) state[k]={}; }); }
+function lsLoad(){ try{ const s = localStorage.getItem(LS_KEY); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} ['log','rest','sauna','vac','timer'].forEach(k=>{ if(!state[k]) state[k]={}; }); }
 function lsSave(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
 function save(){
   lsSave();
@@ -262,6 +276,7 @@ function pct(day){
 function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 
 function render(){
+  setTimeout(tick,0);
   document.getElementById("weekNo").textContent = state.week;
   document.querySelectorAll(".views button").forEach(b=>{ if(b.dataset.view===view) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   document.getElementById("planHead").classList.toggle("hidden", view!=="plan");
@@ -269,7 +284,13 @@ function render(){
   if(view==="log"){ v.innerHTML = renderLog(); bindLog(); return; }
   if(view==="rules"){ v.innerHTML = rulesHtml(); return; }
   renderWeek();
-  v.innerHTML = `<h2 style="font-size:28px;margin:0 0 12px;font-variation-settings:'wdth' 70">${TITLES[tab]}</h2>` + PLAN[tab].blocks.map(b=>`
+  const run=tRunning(tab), el=tElapsed(tab);
+  v.innerHTML = `<h2 style="font-size:28px;margin:0 0 12px;font-variation-settings:'wdth' 70">${TITLES[tab]}</h2>
+    <div class="timer ${run?'running':''}" id="timerBox">
+      <div class="tm"><span data-live="${tab}">${fmtTime(el)}</span><small>${run?'Trening trwa':el?'Zatrzymany':'Czas na siłowni'}</small></div>
+      ${run? `<button class="primary" id="tStop">Zakończ</button>`
+           : `<button class="primary" id="tStart">${el?'Wznów':'Start'}</button>${el?'<button id="tReset">Zeruj</button>':''}`}
+    </div>` + PLAN[tab].blocks.map(b=>`
     <section class="block">
       <h2>${b.title}</h2><p class="sub">${b.sub}</p>
       ${b.items.map(it=>{
@@ -279,7 +300,7 @@ function render(){
         const unit = /\bs\b/.test(it.reps) && !/kg/.test(it.reps) ? "s" : "powt.";
         const cur = state.log[it.id]||[];
         return `<div class="ex ${it.pair?'pair':''} ${all?'complete':''}">
-          <div class="ex-head"><div class="ex-name">${it.name}</div><div class="ex-scheme">${it.sets} × ${it.reps}</div></div>
+          <div class="ex-head"><div class="ex-name">${it.name}${it.alt?` <span class="alt">(zamiennik: ${it.alt})</span>`:""}</div><div class="ex-scheme">${it.sets} × ${it.reps}</div></div>
           <p class="ex-why"><span class="tag">${it.tag}</span>${it.why}</p>
           <div class="sets">
             ${Array.from({length:it.sets},(_,i)=>{
@@ -303,6 +324,8 @@ function render(){
         <button id="saunaBtn" aria-pressed="${!!state.sauna[tab]}">${state.sauna[tab]?'Sauna zaliczona':'Odhacz saunę'}</button>
       </div>
     </section>`;
+  const tS=document.getElementById("tStart"), tT=document.getElementById("tStop"), tR=document.getElementById("tReset");
+  if(tS) tS.onclick=()=>timerStart(tab); if(tT) tT.onclick=()=>timerStop(tab); if(tR) tR.onclick=()=>timerReset(tab);
   document.getElementById("saunaBtn").onclick=()=>{ state.sauna[tab]=!state.sauna[tab]; save(); render(); };
   v.querySelectorAll(".set").forEach(b=>b.onclick=()=>{
     const id=b.dataset.ex, i=+b.dataset.i;
@@ -317,6 +340,31 @@ function render(){
     save();
   });
 }
+
+function tElapsed(t){ const x=state.timer[t]||{}; return (x.dur||0) + (x.start? Date.now()-x.start : 0); }
+function tRunning(t){ return !!(state.timer[t]&&state.timer[t].start); }
+function fmtTime(ms){ const sec=Math.floor(ms/1000), h=Math.floor(sec/3600), m=Math.floor(sec%3600/60), s2=sec%60; return (h? h+":"+String(m).padStart(2,"0") : String(m).padStart(2,"0"))+":"+String(s2).padStart(2,"0"); }
+function fmtMin(ms){ return Math.round(ms/60000)+" min"; }
+function timerStart(t){ const x=state.timer[t]||{}; if(!x.start){ x.start=Date.now(); state.timer[t]=x; } save(); render(); }
+function timerStop(t){ const x=state.timer[t]; if(x&&x.start){ x.dur=(x.dur||0)+Date.now()-x.start; x.start=null; } save(); render(); }
+function timerReset(t){ if(!confirm("Wyzerować stoper tego treningu?")) return; delete state.timer[t]; save(); render(); }
+function tick(){
+  document.querySelectorAll("[data-live]").forEach(el=>{ el.textContent=fmtTime(tElapsed(el.dataset.live)); });
+  const running=["A","B","C"].find(tRunning);
+  let bar=document.getElementById("floatbar");
+  const showBar = running && !(view==="plan" && tab===running && isTimerVisible());
+  if(showBar){
+    if(!bar){ bar=document.createElement("div"); bar.id="floatbar"; bar.className="floatbar"; document.body.appendChild(bar); }
+    if(bar.dataset.t!==running){
+      bar.dataset.t=running;
+      bar.innerHTML=`<span>Trening ${running}</span><b data-live="${running}">${fmtTime(tElapsed(running))}</b><button id="fbOpen">Pokaż</button><button id="fbStop">Zakończ</button>`;
+      bar.querySelector("#fbStop").onclick=()=>timerStop(running);
+      bar.querySelector("#fbOpen").onclick=()=>{ view="plan"; tab=running; render(); document.getElementById("timerBox").scrollIntoView({behavior:"smooth",block:"center"}); };
+    }
+  } else if(bar){ bar.remove(); }
+}
+function isTimerVisible(){ const el=document.getElementById("timerBox"); if(!el) return false; const r=el.getBoundingClientRect(); return r.bottom>0 && r.top<window.innerHeight; }
+setInterval(tick,1000); window.addEventListener("scroll",()=>tick(),{passive:true});
 
 function renderWeek(){
   const g=document.getElementById("weekgrid");
@@ -333,15 +381,28 @@ function renderWeek(){
       <span class="dn">${w.s}</span>${opts(w.k)}
       <button class="open" data-t="${t}" aria-pressed="${tab===t}">
         <span class="dt">${TITLES[t]}</span>
-        <span class="ds">${pct(t)}% serii${state.sauna[t]?' + sauna':''}</span>
+        <span class="ds">${pct(t)}% serii${tElapsed(t)>=60000||tRunning(t)?' · '+(tRunning(t)?'trwa':fmtMin(tElapsed(t))):''}${state.sauna[t]?' + sauna':''}</span>
         <div class="progress"><i style="width:${pct(t)}%"></i></div>
       </button>
+      <label class="vac"><input type="checkbox" data-vac="${w.k}" ${state.vac[w.k]?'checked':''}> Próżnia w domu</label>
     </div>` : `
     <div class="day rest">
       <span class="dn">${w.s}</span>${opts(w.k)}
       <textarea data-rest="${w.k}" aria-label="${w.d}: co robiłeś" placeholder="Co robiłeś?">${esc(state.rest[w.k]||"")}</textarea>
+      <label class="vac"><input type="checkbox" data-vac="${w.k}" ${state.vac[w.k]?'checked':''}> Próżnia w domu</label>
     </div>`;
-  }).join("");
+  }).join("") + (()=>{
+    const trained=["A","B","C"].filter(t=>pct(t)>0).length;
+    const saunas=Object.values(state.sauna).filter(Boolean).length;
+    const active=WEEK.filter(w=>!sc[w.k] && (state.rest[w.k]||"").trim()).length;
+    return `<div class="day sum" aria-label="Podsumowanie tygodnia">
+      <span class="dn">Ten tydzień</span>
+      <span class="row2"><b>${trained}/3</b>treningi</span>
+      <span class="row2"><b>${saunas}</b>sauna</span>
+      <span class="row2"><b id="vacCount">${WEEK.filter(w=>state.vac[w.k]).length}/7</b>próżnia</span>
+      <span class="row2"><b id="activeCount">${active}</b>aktywne dni wolne</span>
+    </div>`;
+  })();
   const planned = Object.values(sc).filter(Boolean);
   const off = ["A","B","C"].filter(t=>!planned.includes(t));
   let el=document.getElementById("offplan");
@@ -351,7 +412,14 @@ function renderWeek(){
   g.querySelectorAll(".open").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; render(); });
   el.querySelectorAll("button").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; render(); });
   g.querySelectorAll("select").forEach(x=>x.onchange=()=>{ if(x.value) tab=x.value; setDay(x.dataset.day, x.value); });
-  g.querySelectorAll("textarea").forEach(t=>t.oninput=()=>{ state.rest[t.dataset.rest]=t.value; save(); });
+  g.querySelectorAll("input[data-vac]").forEach(c=>c.onchange=()=>{
+    state.vac[c.dataset.vac]=c.checked; save();
+    const el=document.getElementById("vacCount"); if(el) el.textContent=WEEK.filter(w=>state.vac[w.k]).length+"/7";
+  });
+  g.querySelectorAll("textarea").forEach(t=>{
+    t.oninput=()=>{ state.rest[t.dataset.rest]=t.value; save(); };
+    t.onchange=()=>{ const el=document.getElementById("activeCount"); if(el) el.textContent=WEEK.filter(w=>!sched()[w.k] && (state.rest[w.k]||"").trim()).length; };
+  });
   if(focused){ const t=g.querySelector(`[data-rest="${focused}"]`); if(t) t.focus(); }
 }
 
@@ -361,6 +429,9 @@ function rulesHtml(){
     <h3>Tempo i przerwy</h3><p>Opuszczanie 2–3 s. Przerwy 60–90 s w parach, 90–120 s przy pierwszym ćwiczeniu. Jeśli po dniu A albo B czujesz, że mięśnie nie zdążyły się zregenerować przed C, zrób w dniu C o jedną serię mniej w każdym ćwiczeniu. Dzięki parom mieścisz się w godzinie.</p>
     <h3>Odżywianie pod talię</h3><p>Przy 68 kg celuj w ok. 110–135 g białka dziennie (1,6–2 g/kg). Lekki deficyt, ok. 300 kcal poniżej zapotrzebowania, daje spadek ok. 0,25–0,5 kg tygodniowo i pozwala utrzymać siłę. Jeśli siła mocno spada, zjedz więcej.</p>
     <h3>Poza siłownią: bieżnia zamiast kroków</h3><p>Pełne 8–10 tys. kroków to ok. 70–85 min marszu, więc nie ma sensu gonić tej liczby na bieżni. Zamiast tego po każdym treningu zrób 20–30 min marszu pod górę: nachylenie 8–12%, prędkość 4,5–5,5 km/h, bez trzymania się poręczy. To ok. 2,5–3,5 tys. kroków i ok. 150–250 kcal na sesję. W dni bez siłowni wystarczy zwykły ruch, np. schody zamiast windy albo 10 min spaceru po posiłku.</p>
+    <h3>Codziennie w domu (ok. 5 min)</h3><p>Próżnia brzuszna: 3 × 20–30 s. Najlepiej rano, na czczo albo przed posiłkiem. Stań lub uklęknij, zrób pełny wydech i wciągnij pępek jak najmocniej do kręgosłupa, oddychając płytko. Działa najlepiej robiona często i krótko, dlatego jest codziennie, a nie na siłowni. Odhaczasz ją w kafelku dnia.</p><p>Opcjonalnie, jeśli masz ochotę: dead bug 2 × 8 na stronę i deska 2 × 30–45 s. To ćwiczenia na macie, które wypadły z siłowni.</p>
+    <h3>Zamienniki</h3><p>Przy mniej typowych ćwiczeniach w nawiasie jest zamiennik na maszynie albo wyciągu. Jeśli czegoś nie ma na Twojej siłowni albo jest zajęte, bierz zamiennik bez wyrzutów sumienia. Wpisuj wtedy ciężar w tym samym ćwiczeniu, ale pamiętaj, że będzie inny niż przy oryginale.</p>
+    <h3>Stoper</h3><p>Kliknij Start po wejściu na siłownię, a Zakończ po ostatnim ćwiczeniu, przed bieżnią i sauną. Stoper liczy dalej, nawet gdy zablokujesz telefon albo zamkniesz aplikację. Jeśli trening regularnie trwa dłużej niż 70–75 min, skróć przerwy albo pilnuj par ćwiczeń.</p>
     <h3>Sauna</h3><p>Dobrze działa na relaks i regenerację, ale nie spala tkanki tłuszczowej. Spadek wagi po saunie to woda, która wraca po wypiciu. Nie wchodź odwodniony, nie łącz z alkoholem i wyjdź, jeśli kręci Ci się w głowie.</p>
     <h3>Dni tygodnia</h3><p>W kafelku wybierz z listy, czy to dzień wolny, czy trening A, B albo C. Przypisanie treningu do nowego dnia zdejmuje go ze starego. Układ zostaje na kolejny tydzień, więc zmieniasz go tylko wtedy, gdy plan się przesuwa. Staraj się nie robić dwóch treningów dzień po dniu. Jeśli się nie da, w drugim dniu zrób o jedną serię mniej w każdym ćwiczeniu.</p>
     <h3>Dni wolne</h3><p>Wpisuj w kafelkach, co robiłeś: bieżnię, spacer, basen, rower. W historii tygodni zobaczysz, ile było ruchu poza siłownią.</p>
@@ -386,8 +457,8 @@ function renderLog(){
   </section>
   <section class="block"><h2>Historia tygodni</h2>
     <p class="sub">Tydzień trafia tutaj po kliknięciu „Zapisz i zacznij nowy tydzień”. Pokazuję najwyższy ciężar z kluczowych ćwiczeń.</p>
-    ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th><th>Sauna</th><th>Dni wolne</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
-      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%</td><td>${h.pB}%</td><td>${h.pC!=null?h.pC+'%':'–'}</td><td>${h.sauna!=null?h.sauna+'×':'–'}</td><td style="min-width:180px">${esc(h.rest? WEEK.filter(w=>h.rest[w.k]).map(w=>w.s+': '+h.rest[w.k]).join('; ') || '–' : '–')}</td>${keyEx.map(id=>`<td>${esc(maxKg(h,id))}</td>`).join("")}</tr>`).join("")}
+    ${hist.length?`<div class="scroll"><table><tr><th>Tydz.</th><th>A</th><th>B</th><th>C</th><th>Sauna</th><th>Próżnia</th><th>Dni wolne</th>${keyEx.map(id=>`<th>${ALL.find(x=>x.id===id).name.split(" ").slice(0,2).join(" ")}</th>`).join("")}</tr>
+      ${hist.map(h=>`<tr><td>${h.week}</td><td>${h.pA}%${h.time&&h.time.A?' · '+h.time.A+' min':''}</td><td>${h.pB}%${h.time&&h.time.B?' · '+h.time.B+' min':''}</td><td>${h.pC!=null?h.pC+'%':'–'}${h.time&&h.time.C?' · '+h.time.C+' min':''}</td><td>${h.sauna!=null?h.sauna+'×':'–'}</td><td>${h.vac!=null?h.vac+'/7':'–'}</td><td style="min-width:180px">${esc(h.rest? WEEK.filter(w=>h.rest[w.k]).map(w=>w.s+': '+h.rest[w.k]).join('; ') || '–' : '–')}</td>${keyEx.map(id=>`<td>${esc(maxKg(h,id))}</td>`).join("")}</tr>`).join("")}
     </table></div>`:`<p class="sub">Jeszcze nic. Po pierwszym tygodniu zobaczysz tu swoje ciężary.</p>`}
   </section>`;
 }
@@ -404,15 +475,16 @@ function bindLog(){
 
 document.querySelectorAll(".views button").forEach(b=>b.onclick=()=>{ view=b.dataset.view; render(); });
 document.getElementById("clearBtn").onclick=()=>{
-  if(!confirm("Wyczyścić odhaczone serie i saunę w tym treningu? Wpisane ciężary i powtórzenia zostaną.")) return;
+  if(!confirm("Wyczyścić odhaczone serie, saunę i stoper w tym treningu? Wpisane ciężary i powtórzenia zostaną.")) return;
   PLAN[tab].blocks.flatMap(b=>b.items).forEach(it=>delete state.done[it.id]);
   delete state.sauna[tab];
+  delete state.timer[tab];
   save(); render();
 };
 document.getElementById("newWeekBtn").onclick=()=>{
   if(!confirm("Zapisać tydzień "+state.week+" w historii i zacząć nowy?")) return;
-  state.history.push({week:state.week, pA:pct("A"), pB:pct("B"), pC:pct("C"), kg:{...state.kg}, log:JSON.parse(JSON.stringify(state.log)), rest:Object.fromEntries(Object.entries(state.rest).filter(([k,v])=>v && !sched()[k])), schedule:{...sched()}, sauna:Object.values(state.sauna).filter(Boolean).length, date:new Date().toISOString().slice(0,10)});
-  state.week++; state.done={}; state.log={}; state.kg={}; state.rest={}; state.sauna={};
+  state.history.push({week:state.week, pA:pct("A"), pB:pct("B"), pC:pct("C"), kg:{...state.kg}, log:JSON.parse(JSON.stringify(state.log)), rest:Object.fromEntries(Object.entries(state.rest).filter(([k,v])=>v && !sched()[k])), schedule:{...sched()}, sauna:Object.values(state.sauna).filter(Boolean).length, vac:WEEK.filter(w=>state.vac[w.k]).length, time:Object.fromEntries(['A','B','C'].map(t=>[t,Math.round(tElapsed(t)/60000)])), date:new Date().toISOString().slice(0,10)});
+  state.week++; state.done={}; state.log={}; state.kg={}; state.rest={}; state.sauna={}; state.vac={}; state.timer={};
   save(); render();
 };
 
@@ -438,7 +510,7 @@ lsLoad(); render();
     if(!id) return;
     db = d; docRef = db.doc("data/users/"+id+"/plan/state");
     const snap = await docRef.get();
-    if(snap.exists){ state = Object.assign({week:1,done:{},kg:{},log:{},rest:{},sauna:{},history:[],body:[]}, snap.data()); ['log','rest','sauna'].forEach(k=>{ if(!state[k]) state[k]={}; }); lsSave(); render(); }
+    if(snap.exists){ state = Object.assign({week:1,done:{},kg:{},log:{},rest:{},sauna:{},vac:{},timer:{},history:[],body:[]}, snap.data()); ['log','rest','sauna','vac','timer'].forEach(k=>{ if(!state[k]) state[k]={}; }); lsSave(); render(); }
     setSync("na Twoim koncie, prywatnie. Działa na telefonie i komputerze.");
   }catch(e){ docRef=null; }
 })();
